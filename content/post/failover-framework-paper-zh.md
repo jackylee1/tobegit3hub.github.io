@@ -1,0 +1,180 @@
++++
+date = "2016-01-10T08:35:32+08:00"
+draft = true
+title = "failover framework paper zh"
+
++++
+
+
+
+{chendihao}@xiaomi.com
+
+## 摘要
+
+随着互联网的发展，分布式系统以其廉价的成本、高效的运算效率和强大的容错能力逐渐成为炙手可热的话题。分布式系统程序可以运行在上千台普通计算机上，随着业务的增长来扩大集群的规模，拥有极好的水平拓展能力，但同时也要承受普通计算机相对较高的硬件故障率，这就要求系统由于软硬件故障导致failover时仍保证一定的可用性。而测试软件系统的这种容灾能力也成为分布式计算时代的另一大难题。
+
+本论文将介绍一个针对分布式系统的Failover测试框架的设计与实现，探讨failover测试的实践以及相关工作。第一部分将会介绍Failover测试和测试框架等相关概念，让读者对此软件有个系统的认识。第二部分讲述这个测试框架的需求设计，为系统的实现提供理论基础。第三部分会详细介绍整个框架的架构设计，探讨框架的解耦与各个组件。第四部分是具体的代码实现，让读者直接理解测试框架的实现原理。第五部分是这个框架的实践总结，介绍在实际生产环境中的最佳实践。第六部分涉及这个框架的相关工作，简要说明与这个测试框架相关的几个系统。第七部分是对整篇论文的总结。第八部分是列举本论文相关的引用。
+
+关键词：分布式系统；Failover；测试；测试框架
+
+## Abstract
+
+With the development of Internet, distributed system is becoming more and more popular because of its low cost, high performance and robust ability of fault tolerance. The distributed program is able to run on thousands of commodity computers. It has well horizontal expansion capability to scales the cluster whenever it needs. However, we should suffer from relatively higher rate of hardware failure, which means that the system must be high available during failover. Testing the about-mentioned disaster recovery capability is another problem for us now.
+
+This paper will introduce the design and implement of a failover test framework for distributed system. Then talk about the best practices and related work. The first part will introduce the concerts of failover test and test framework. Then readers can generally understand the topic of this paper. The second part will talk about the requirement which helps to implement the system. The third part will present the detail of test framework's architecture. So readers are able to know more about each component of this program. The fourth part is about the implement of failover test framework. The fifth part will summarize the usage of this program and the best practices of it. The sixth part is the related work about some tested systems. The seventh part is the conclusion of this paper. And finally the eighth part will list the used references.
+
+Keyword: Distributed System, Failover, Test, Test Framework
+
+## 介绍
+
+Failover[1]测试可以理解为失败恢复测试，是验证软件系统在发生故障时能否迅速恢复服务的一种测试。分布式系统一般都要保证高可用，也就是说系统的部分故障不应该影响到系统的服务，在发生失败时能够尽快重启服务，failover测试正是检验软件这种容灾能力的有效途径，Netflix曾经发表文章[2]说明failover测试的重要性，在软硬件故障不可避免的今天通过提高错误发生的概率是一种更有效的预防措施。相对于单元测试和集成测试，failover测试还没有普遍被执行，大部分分布式应用只要功能实现了就直接上线，一旦在线上发现问题再处理，这种危害用户体验的测试方法是很不值得提倡的。由于缺少足够的failover测试方法论和测试工具，目前在国内外对这项测试工作仍不够重视。
+
+Failover测试框架[3]则是进行failover测试的一个工具，框架必须提供错误注入的方法来模拟软硬件故障，观察系统的行为来判断系统处理failover的能力，同时框架也应该提供一种可拓展的接口，针对不同的分布式系统可以进行针对性的测试。作为测试框架，针对failover测试的这种系统也应该足够易用，方便测试人员使用，而且提供友好的用户界面，框架在实现本身的功能外，不能引入其他的缺陷，测试目的与结果也应该足够明确。
+
+根据业务需求，我们的生产环境中已经采用了多套分布式存储和计算系统，如HBase、HDFS、ZooKeeper和Chronos等等。这些系统在设计时考虑到高可用，都实现了各自的failover机制，但由于编码过程以及一些未知的因素可能导致线上的系统并没有达到我们的预期，于是我们考虑实现一个通用的Failover测试框架，来测试系统的failover能力并找出代码中潜在的Bug。
+
+这个Failover测试框架的实现本身就是一个较大的考验，除了要实现注入错误模拟故障的功能，还必须提供数据验证的模块，同时要保证可拓展性用于多类异构的分布式系统，而且还要有数据收集、页面展示和邮件报警的功能。因此，我们在框架设计与实现上都花了不少功夫，而且在实践过程中也遇到不少的问题，包括发现被测系统存在的漏洞还有框架自身执行的问题，下面会分别讲述以上提到的内容。
+
+## 需求
+
+在设计一个可用的系统之前，我们必须明确理解我们的需求和最终想要的测试结果。和普遍的测试框架一样，框架的用户是测试和开发人员，而且目的是为了检验软件程序中可能存在的漏洞，而作为一个专门针对分布式系统的Failover测试框架，我们还必须提供failover测试所需要的功能，如错误注入、数据验证等。由于系统是由我们内部使用的，易用性、可靠性方面都需要一定的保证，同时针对不同的分布式系统也要有一套完整的解决方案，于是我们在框架设计时就归纳出一下几个需求要点：
+
+1. 实现不同级别的故障模拟
+2. 包含数据验证功能
+3. 系统功能易拓展
+4. 系统参数可配置
+5. 故障能够重现
+6. 提供页面展示
+7. 实现邮件报警
+8. 接口简单易用
+
+首先我们不仅仅要模拟进程级别的故障，很多硬件故障如磁盘损坏、机器重启等常见错误也必须能够模拟。其次是在注入错误的同时，应该有外围的工具来进行数据验证，而且在我们觉得除了每次测试时需要验证数据，还必须要有一个持久的测试工具贯穿整个failover测试的各个生命周期。而且我们是设计一个框架，具体的故障模拟和策略选择应该是允许用户来拓展的。这个框架运行所需要的所有参数应该都是可配置的，通过配置文件来制定执行具体的操作，也极大地提高了系统的易用性。而一旦发现了问题，我们应该能立刻停下来，然后尽量重现这个问题，于是我们就要有这种replay机制，这也是一个测试框架所应该支持的，而不需要测试人员额外的工作。为了简化框架的运行环境，我们希望将系统的运行状态展现在Web界面中，用户通过浏览器就可以访问了而不需要安装其他客户端，页面展示的内容也应该齐全方便测试人员定位问题。考虑到测试尽可能自动化，一旦测试框架发现问题后直接给相关人员发送报警邮件，这就省却了测试人员无休止的定期检查工作。最后我们也希望这个框架是简单易用的，暴露给用户的接口也是足够简单。
+
+当然，我们在实现的过程中也拓展了这些功能，同时参考了国外开源项目的设计。首先是针对HBase进行集成测试的ChaosMonkey，HBase[4]是一个分布式的NoSQL数据库，其集群里的任意一台服务器挂了以后其他服务器可以迅速接替服务，保证系统是高可用的。ChaosMonkey[5]是HBase项目的一个测试模块，它通过向集群随机发出操作指令，测试HBase在这种干扰下能否正常服务，它的缺点是只停留在进程级别的异常而不能模拟硬件级别的故障。另一个值得借鉴的是Netflix开源的SimianArmy[6]项目，它拥有硬件故障等全套解决方案，但是灵活性差不易拓展。当我们向社区反馈[7]准备实现这个Failover测试框架的时候，得到了Cloudera公司Todd Lipcon的建议，他开源实现了一个轻量级的测试框架Gremlins[8]，不过架构过于简单，故障模拟都只能发生在本地，缺乏测试整个集群的能力。通过对比和学习这些开源框架，我觉得我们的需求还是覆盖了绝大部分的用户和系统，而且良好的架构也能够让用户拓展实现自己的需求。
+
+## 架构
+
+根据上述制定的需求，经过我们的设计得到了下面大胆的系统框架。
+
+第一步是采用Policy/Task/Action三层架构。Policy表示我们运行错误注入的策略，例如安排随机执行故障模拟或者按顺序执行，甚至还可以Replay一组任意的故障。Task则是将要执行的错误注入的集合，它是每次failover测试的基本单位，也是我们要重现故障Replay的最小单元。最后Action代表一个实际的错误，也就是我们能够模拟的软硬件故障。通过这三种粒度的划分，我们系统的架构就更加清晰，拓展性也更强，例如我想使用新的策略，通过继承Policy实现特定的接口就可以了，如果我想添加新的故障模拟，只需继承Action这个接口就可以集成到这个测试框架中。
+
+第二步我们定义了测试框架的组件，除了错误注入工具，我们还设计了DataValidator、ClusterChecker和ExternalTool这几个部件。如何选择要执行的Actioin，我们提供了ActionProvider这个抽象类，已经实现了HBaseActionProvider、HdfsActionProvider、EnvironmentActionProvider、FileActionProvider和ScriptActionProvider，你可以针对HBase、HDFS这些分布式系统进行测试，也可以模拟硬件环境的故障，新的系统要进行failover测试只需在这里拓展就足够了。DataValidator是数据验证工具，在failover测试过程中保证数据一致性也是很重要，例如针对HBase的测试我们会有客户端不断读写数据库来验证数据。ClusterChecker是每一轮测试过后必须进行的健康检测工作，如果集群没有达到我们的预期，证明failover测试导致了系统的问题需要我们去改进。最后的ExternalTool是一个外围运行的组件，我们可以理解为独立于failover测试执行的，我们希望无论被测系统遭受怎样的failover，从客户端的角度它的行为是一致的，在HBase的测试中我们就分配了多个单独的线程来检验系统的健壮性。
+
+在系统框架基本设计出来后，我们考虑必须能够模拟硬件级别的故障。在我们的生产环境Linux系统中，要实现诸如网络异常、磁盘不可用、CPU使用率过高等异常是可以用过软件来模拟的，当然需要安装特定的软件和配置，更重要的是需要Root权限。前面提到的SimianArmy和Gremlins项目对硬件故障的模拟都是在本地或者SSH登陆到服务器上以Root权限执行命令，而我们的线上为了系统安全，在服务器外围做了一个门神系统，远程操作命令都无法被直接执行。针对这种特殊环境，我们设计出一个更为通用的machine-failover系统，这个系统暴露了一个安全的HTTP请求接口，授权的用户都能在远程发出请求，由这个HTTP server来统一处理，并通过Salt或者SSH的形式进行实际的错误注入工作。而所有能够模拟的硬件故障，我们也整理成文[9]，将软件部署在服务器上就可以用了。
+
+作为一个自动化的测试框架，我们一开始并没有花太多精力在界面设计上，后来逐渐发现页面展示的重要性。在Failover测试框架的运行过程中，我们需要知道现在的运行状态，还有历史已经运行了什么Action，这些信息都需要一个载体来展现。于是我们参考HBase HMaster的设计，测试框架运行时启动一个内嵌的HTTP服务器，通过能够执行逻辑运算的容器和模板引擎生成一个动态Web页面，任何人通过服务器提供的IP和端口都可以在浏览器直接查看框架的配置和运行情况。同时使用JXM上报metrics，在我们的另一个数据收集和展示系统中获得这些信息，持久化到数据库中，并展示框架长期的运行情况。
+
+虽然有了不错的Web UI供我们观察，但实际发生测试失败的次数毕竟很少，我们需要一种报警机制而不是由开发者定期去考察系统状态。这是一种非常适合Notification而不是Polling的场景，我们需要实现邮件报警功能，只有在测试不通过的情况才给我们开发者发报警邮件，这样就省去了大量后期运维的工作。利用公司搭建的邮件服务器和Python脚本，很容易就实现这个功能了。
+
+最后在提供给测试人员使用的接口上，我们力求使用简单，又必须提供灵活的可配置能力。所以我们生成最终的可执行文件必须是直接可用的，至于选择哪种Policy和Aciton、针对那个集群进行测试，这些都通过与HBase、HDFS一样的自描述的XML文件来配置。我们会自动生成一份默认的配置文件，测试人员直接修改配置项就可以进行各种的failover测试，当然如果你要测HBase或HDFS系统，你还必须提供hbase-site.xml和hdfs-site.xml来指定要测试的特定集群。
+
+## 实现
+
+这个Failover测试框架的实现遵循我们的架构设计，每一个模块都必须满足起功能设计，同时要有足够的UT来覆盖我们的代码。为了让开发者更好的使用设置是拓展这个框架，基础框架的代码注释也十分清晰，基本每个函数又有用法解释和参数说明，代码的质量高低也会影响后续的维护工作。下面将会详细讲解针对分布式系统的Failover测试框架的实现要点。
+
+在开发语言的选择上使用与HBase相同的Java，而且也使用Maven来构建项目，好处就是代码结构规范，项目依赖管理容易，是Java项目的标准开发模式。根据Maven的规范，首先在pom.xml声明项目的依赖，包括用于单元测试的JUnit、Mockito，用于序列化的json-lib和测试所依赖的HBase项目。
+
+### 实现Policy/Task/Action三层架构
+
+Policy表示选择和执行Action的策略，它通过ActionProvider给定的集合，制定相应的策略然后生成一个特定的Task来执行，所以要拓展Policy必须重载selectActionsToCreateTask这样的函数。而Task则维护了一次测试相关的Action集合和这次Task执行的时间戳，每个Task可以包含一个或多个Action。其中的Action就是一次故障模拟的实现，为了支持多个Action同时执行，我们实现的Action都继承了Runnable接口，而且加入的Action执行结果的时间的统计，我们要拓展新的错误注入只需继承这个类即可。我们在实现这三层架构时，由于Policy和Action都是可拓展的，所以充分利用了Java里面虚类的概念，代码依赖时只提供接口，只有在真正运行的时候才会用实现类来代替这个基类。最后我们实现了RandomActionPolicy、OneByOneActionPolicy和ReplayActionPolicy，这种清晰的架构划分为我们拓展自定义的Policy提供了便捷的方法。
+
+我们可以简单看看RandomActionPolicy.java的源代码，首先是集成Policy必须selectActionsToCreateTask()这个虚函数，第一步是根据整个actionSet随机选取一定数量的Action，第二步就是利用选出来的Action集合创建Task。实际上执行Action的逻辑都在Task中，根据给定的Action类名反射出Action对象，然后为每一个Action对象创建新的线程来执行。当然在所有Action执行过去，这个Task的信息会记录到本地一个Log文件中，这个文件就可以被ReplayActionPolicy用来重现故障了。
+
+### 实现系统参数可配置
+
+前面提到我们实现的Policy就有三个，而实现的全部Action就是三十个之多，具体使用那些系统参数来运行这个failover测试，这些都是通过配置文件来指定的。自解析的XML配置文件允许用户在不了解系统的实现时，也能通过修改配置达到自己的测试目的，这需要我们在读取配置时做更多的工作。我们在框架实现时大量地采用了工厂设计模式，同时利用Java的反射机制，在运行时才生成确定要使用的类。例如我们可以指定RandomActionPolicy、HBaseActionProvider和HBaseDataValidator，这几个类的时候都不是硬编码到测试框架中，而是由测试框架去读取配置文件，当读到用于指定的类名时直接反射成对应的对象，从用户的角度也不需要知道系统的实现，只要配置好相应的参数就可以了。这种开放性的系统架构，允许其他人拓展我们测试框架的任意一个部件，如自定义Policy或者ExternalTool，然后直接在配置文件里指定自定义的类名即可，无须修改框架的任意一行代码，做到可插拔、易拓展。
+
+我们可以看一下failover.xml这个配置文件，里面有多个<property>标签，里面的<name>标签表示要配置的项，<value>表示这个配置项的值。可以看出，我们几乎可以配置这个框架的所有组件，如ActionProvider、DataValidator、ClusterChecker、Policy和ExternalTool的类名，还有针对ReployActionPolicy所要Replay的Log文件名和timestamp等等。所有的可选值都列举在配置文件中，测试人员无需阅读框架源代码就可以快速使用框架来测试了，修改配置也不需要额外的客户端来辅助。
+
+### 实现故障重现功能文件
+
+我们调研了现有的failover测试框架，所以都实现了错误注入的功能，不过一旦测试出系统的Bug时，都没有很好地办法来重现这个问题，因此很可能由于无法重现而忽略掉这个问题。而我们的测试框架在设计时就考虑到这点，我们将运行一次failover测试所有的Action抽象成一个Task，每个Task执行结束后都会持久化到本地的文件，当其中一个Task执行过后发现被测系统存在问题，我们可以马上从本地文件中找到这个Task的信息，然后选用ReplayActionPolicy马上Replay。Replay功能也允许我们针对特定的Task进行不同频度的测试，这种灵活的执行方式大大提高了故障重现的概率，也让我们在发现和定位一个问题更加有把握。
+
+要使用Replay功能，需要在failover.xml指定replay.file.name和replay.timestamp，这两项可以指定唯一的Task来进行重放。而ReplayActionPolicy的源代码也很简单，首先是作为Policy必须实现的虚函数selectActionsToCreateTask()，而里面的逻辑就是通过配置文件里面的配置项来读取Task信息，然后重新执行这个Task里面的所有Action。
+
+### 实现数据验证功能
+数据验证功能也是当前的failover测试框架所缺少的一个部件，一味地对系统进行错误注入是没有意义的，我们还需要知道系统在failover过程中能否保持预期的服务质量。因此，很多人在进行错误注入的同时，会手动启动一些客户端来访问被测的集群，这样做的弊端是带来了额外的运维工作，而且在客户端访问失败后不能及时通知测试人员，于是我们把这部分功能也集成到测试框架中。不同系统的数据验证方式是不同的，我们将这种功能抽象成接口，然后专门为HBase实现了HBaseDataValidator这个工具，在集群进行failover测试时从客户端的角度不断读写数据库，理论上这种failover测试对客户端应该是透明的，如果出现数据一致性问题就可以确定系统存在正确性的Bug了。
+
+我们针对HBase实现了一个HBaseDataValidator工具，用户可以针对各自的分布式系统实现自己的验证工具，只需要实现基类的startValidator()、stopValidator()和isDataConsistent()这三个虚函数即可。而HBaseDataValidator也实现了这三个函数，在startValidator()里面启动了三个线程分别写数据库、读数据和删除数据库中的数据，同时在内存中保留这些读写记录。stopValidator()时结束线程并回收资源。当外界调用isDataConsistent()时返回验证结果，由于我们内存中有所有增删改的记录，所有每次读数据库时都会将读到的值也内存的作比较，如果不一致证明HBase数据库返回的数据时不一致的。
+
+### 实现测试框架的页面展示
+
+我们在运行failover测试框架的时候，通过服务器指定的IP和端口就可以访问这次failover测试的配置以及运行情况，这有赖于我们框架实现的内嵌HTTP服务器。我们参考了HBase InfoServer的实现，通过创建一个新的Jetty服务器来接受请求，然后使用Servlet获取动态内容，最后经过Jamon模板生成静态的HTML页面返回。只要failover测试在进行，内嵌的服务器就可以提供服务，任何人都可以通过浏览器看到这次failover测试的配置和跑过的Task情况，解放了测试人员运维时不断登录到服务器查Log的麻烦，界面友好的Web UI也是作为一个成熟框架很重要的一部分。
+
+页面展示的代码比较复杂，我们使用了jamon模板，实现了FailoverStatusTemplate.jamon，通过Failover测试框架的主程序把系统的Configuration对象和Task对象传进来，然后就在页面上展示了。我们使用HTML搭建整个页面的结构，利用Bootstrap这个主流框架进行页面样式的美化，然后动态内容就使用jamon拓展的标签。用户在failover测试框架运行起来后，只需用浏览器打开指定的IP和端口就可以看到这个框架运行的详细信息了。
+
+### 实现测试框架指标收集和邮件报警
+前面提到failover测试过程中框架会启动内嵌的HTTP服务器，同时它也会通过标准的JMX格式吐出系统当前运行的Task信息，通过服务器IP和端口后面加上“/jmx”就可以看到了。在生产环境上，我们就是通过测试框架吐出的系统metrics，通过自己实现collector来收集这些信息，然后持久化到我们的MySQL数据库中，最后利用Django来做数据分析以及统计功能。我们的测试框架只实现了metrics的push，而由外部系统实现pull，这样充分解耦了两个不同的功能，甚至允许开发者实现自己的数据处理和分析工作，当然我们也提供了一套开源的收集与展示的解决方案。同时我们在收集到框架测出的系统异常时，利用公司提供的邮件服务器，通过编写简单的Python脚本就可以向我们开发者发送邮件报警了，功能虽然简单不过也省去了我们后续大量的运维时间和成本。
+
+邮件报警功能使用Python的smtplib模块很容易就可以实现了，通过这个库创建一个SMTP对象，根据用户名密码登陆后，直接调用sendmail()就可以发送邮件了。不过由于这个依赖于内部的服务器支持，需要给定用户名和密码，这里也就不再详述了。
+
+### 实现硬件级别的错误注入
+
+硬件级别的故障模拟是我们框架设计就考虑的一个要点，由于这与底层的服务器相关，而且不同公司的服务器运行环境也各不相同，于是我们专门实现了一个硬件故障模拟系统machine-failover。这个系统包含了模拟CPU、内存、磁盘、网络等几乎硬件故障的软件和工具，可以很方便地部署到我们的服务器上，而且它还实现了一个作为控制中心的HTTP服务器，为不是直接SSH的环境提供了更多访问接口。分布式Failover测试框架本身包含了硬件级别的错误注入，而实际上它需要依赖于服务端提供的故障模拟服务，我们在测试框架中保留了对这种服务的访问接口，只要服务器使用machine-failover或者自定义的故障模拟服务，我们就可以轻易地从客户端进行硬件级别的failover测试了。
+
+Machine-failover的HTTP服务器是一个flask程序，只是通过接受不同URL的请求来调用不同的脚本。而真正执行故障模拟的是一系列shell脚本，这些脚本的执行需要提前配置好环境，具体的时候也因不同操作系统而异。因为模拟磁盘损坏、网络异常、内存不足等错误的方法都不一样，我们就做成统一的脚本，所有命令都通过这个脚本发出，部署到服务器时也只需要把这个程序拷贝过去就可以了。
+
+### 实现外围测试工具
+
+虽然我们每次failover测试时都会执行框架提供的数据验证工具DataValidator，但在两次测试的间隙和一些不可预知的情况下，我们还是需要一个全局的工具来保证系统的稳定，这就是外围测试工具ExternalTool的价值。ExternalTool会在框架启动之初就被执行，只有在整个failover测试框架停止前才会结束验证，在针对HBase集群的测试中，我们实现的ExternalTool就重用了HBaseDataValidator，因为我们必须保证在整个failvoer测试包括两次测试的间隙都确保数据的一致性。外围测试工具也可以实现其他的验证功能，我们把这个部件集成到测试框架中，开发者可以像Policy那样轻易地拓展成自己需要的工具。
+
+我们通过拓展HBaseDataValidator就可以实现一个针对HBase的ExternalTool，当然如果有不同需求也可以实现不同的逻辑。如果不需要这个功能，我们缺省提供了NullExternalTool，这个程序不会做额外的数据验证工作，当然也不会影响到原有框架的执行。
+
+### 实现任意程序的failover测试
+
+在实现完针对HBase和HDFS的failover测试后，我们还想利用这个框架已经做好的数据展示、邮件报警等功能，完成对ZooKeeper和我自己实现的Chronos的failover测试，发现还要为不同的系统编写Action子类，编译后才能执行。而且我们发现大部分系统的fail命令和recover命令都可以在命令行中执行，于是我萌生了实现ScriptAction的意愿。ScriptAction是一个通用的Action，只需要将你要执行的命令放到一个脚本中，在运行failover框架前修改配置文件指定到这个脚本，这样你无须修改源代码也可以执行动态的命令了。通过这个拓展，我们在没有修改框架一行代码的情况下，实现了对ZooKeeper和Timestamp的failover测试，运行情况也相当让人满意。
+
+这个类的实现是ScriptAction.java，它通过failover.xml这个配置文件获得要执行的脚本名字，然后使用Java的Runtime类来执行。和其他Action一样，这个Action也要有一个类型名为Script，而且必须实现perform()这个虚函数，而一旦外部脚本执行出错，它也会立刻抛出异常表示这个Action执行出错了。
+
+### 实现策略设计模式
+
+策略设计模式是指定义一个算法的序列，封转各个组件，通过接口让它们来交互，而在实际使用中由用户随意替换。这个failover测试框架的主程序就用到了策略设计模式，将各个组件如ActionProvider、Policy、DataValidator、ClusterChecker、ExternalTool等封转成抽象类，调用用只需要通过接口就可以了，而我们也实现了针对HBase、HDFS的子类，用户运行时指定这些子类即可替代原来的接口。当然不是每个分布式系统都需要ExternalTool这些组件的，我们灵活地实现了NullExternalTool等各种空组件，缺省运行时不会有任何操作，既保证了框架的可拓展性也不会为用户增加额外的负担。
+
+在FailoverFramework.java中，runFramework()里面用到的框架组件都是他们的父类，由于已经定义好接口，所以组件之间可以正常地交互，而实际上的交互逻辑都由子类来实现。所有框架用到的ActionProvider、DataValidator、ClusterChecker、Policy和ExternalTool都是虚类对象的引用，只有在运行时才执行用户配置的子类对象。
+
+### 实现工厂设计模式
+
+工厂设计模式是指通过定义一个接口来创建对象，这些子类对象都由统一的工厂类来初始化。我们在测试框架中大量的运用了工厂设计模式，实现了ActionProviderFactory、ClusterCheckerFactory、DataValidatorFactory、PolicyFactory、ExternalToolFactory这些工厂类，由这些工厂类来创建各个子类的对象。这样做的好处是所有子类的初始化都由同一个接口来完成，而且初始化这些对象的参数可以统一处理，我们是通过配置文件传进去的，这样用户要设置也十分简单。
+
+我们选择ActionProvider.java这个类的源代码来看，只有一个被定义为abstract的getActionClassNames()，而他的所有子类如HBaseActionProvider都各自实现了这个方法。在HBaseActionProvider中，一个成员变量ACTION_SET保存了所有已编译的Action类名，然后在getActionClassNames()全部返回。
+
+## 实践
+
+在Failover测试框架的开发过程以及开发完成后，我们已经针对HBase、HDFS、ZooKeeper以及自己实现的Chronos系统进行了failover测试。
+
+在易用性方面，这个框架在不断迭代的过程中已足够完善，只要通过一个简单的配置文件就可以利用起全部的测试功能。而且只要一开始部署好，后续的页面展示、指标收集以及历史数据统计都可以持续进行，无须人为参与，通过Web UI展示用户也无须安装额外的客户端软件。
+
+在实用性方面，Failover基本满足了我们的需求，通过不断地执行错误注入并且进行数据验证，很好地考验了分布式系统的容灾能力。尤其在硬件故障的模拟上，如磁盘填满和机器重启等故障经常使系统崩溃或者异常，要求我们改进被测系统的架构来满足这种容灾要求。针对Chronos的failover测试我们每十分钟跑一次，随即杀掉一个Chronos进程或者它所依赖的ZooKeeper进程，从客户端的角度会有一小段不可用时间但仍能恢复服务，经过连续一个星期的测试没有发现正确性问题，这也大大提高了我们使用Chronos的信心。
+
+不过在实践过程中我们也发现了一些问题，在对HBase很长的一段时间进行failover测试，都没有邮件报告系统的问题。实际上HBase曾经在几十分钟内都是不可用的，虽然没有正确性问题但这并不是我们预期的行为，我们发现我们对HBase集群健康检测的条件设置比较宽松，即使几十分钟不可用也没有邮件报警，后续通过对框架的改进可以解决这个问题。还有一个问题就是Failover测试框架运行很长一段时间后自行推出了，通过日志看出框架本身存在内存滥用而且没有释放相关资源，这个问题也在后续的版本迭代中解决了。
+
+
+## 相关工作
+
+HBase是根据BigTable[10]一个开源的分布式数据库，也是我们框架设计时考虑到最重要的被测系统。它本身包含基于ZooKeeper的HA（高可用行）机制，在软硬件故障发生后进行failover，理论上不会影响数据的一致性，但线上的HBase集群却屡次由于系统的Bug导致丢数据的情况。因此，利用Failover测试框架测试HBase可能潜在的问题，更有助于我们完善这个系统。
+
+HDFS[11]是一个分布式的文件系统，它也有自身的HA机制保证部分服务器挂了不会影响整个集群，而且通过多备份的形式也可以保证数据不会丢失。同样利用Failover测试框架来测试HDFS的这些特性，也有利于找的系统潜在的问题。
+
+ZooKeeper是一个分布式的协同服务，它通过提供简单的原语让其他应用很容易就可以实现一致性的服务，而它本身实现了Fast Paxos协议，任何一台机器挂了也不会影响自身的服务。我们使用Failover测试框架不断启停ZooKeeper进程，经过外部系统的测试可以检验ZooKeeper是否能维持这种保证。
+
+Chronos是一个提供全局严格单调递增timestamp的服务，它依赖ZooKeeper实现主被切换和服务端的failover，保证在同时启动多台服务器的情况下，任意一台服务器挂了都能迅速恢复服务。实际上除了服务器宕机，CPU占用率过高、磁盘损坏和网络不可用等因素都可能造成系统问题，我们通过Failover测试框架模拟了这些故障，经过测试后可以判断Chronos确实能在failover时保证高可用。
+
+## 总结
+
+分布式系统Failover测试框架可以说是随着互联网的发展应运而生的，大数据的存储与计算给传统计算机架构带来革新，采用廉价的普通计算机组合分布式集群成为新的解决方案，但在越来越重视用户体验和服务质量的今天，实现高可用的软件系统是最基本的要求，同时failover测试也成为了系统测试中不可或缺的一环。
+
+而我们的Failover测试框架正迎合这种趋势，为已有的分布式存储和计算平台提供软硬层级别的failover测试，而且框架保证良好的可拓展性和易用性，能够轻易满足的各类软件的测试需求，也以其开放性可以兼容新的分布式系统。通过这样一个系统的开发， 不仅满足我们对分布式系统的测试需求，也希望能带动软件测试行业与互联网发展共同前行。
+
+
+## 引用
+[1] Failover维基百科介绍 https://en.wikipedia.org/wiki/Failover
+[2] Netflix采用ChaosMonkey介绍 http://techblog.netflix.com/2012/07/chaos-monkey-released-into-wild.html
+[3] Prefail一个可编程错误注入框架 UCB/EECS-2011-30
+[4] Apache HBase项目主页 https://hbase.apache.org/
+[5] Apache HBase测试主页 http://hbase.apache.org/book/hbase.tests.html
+[6] Neflit SimianArmy项目地址 https://github.com/Netflix/SimianArmy  
+[7] HBase新Failover测试框架Jira https://issues.apache.org/jira/browse/HBASE-9802
+[8] Gremlins项目地址 https://github.com/toddlipcon/gremlins
+[9] 模拟机器故障 http://bigdata-blog.net/2013/12/13/%E6%A8%A1%E6%8B%9F%E6%9C%BA%E5%99%A8%E6%95%85%E9%9A%9C/
+[10] BigTable结构化数据的分布式存储系统论文 OSDI 2006  http://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf
+[11] Hadoop 分布式文件系统论文 978-1-4244-7153-9/10/ ©2010 IEEE http://storageconference.org/2010/Papers/MSST/Shvachko.pdf

@@ -1,0 +1,67 @@
++++
+date = "2016-01-10T08:35:29+08:00"
+draft = true
+title = "april bookmark 2013"
+
++++
+
+
+
+* [Daring Fireball: Markdown Syntax Documentation](http://daringfireball.net/projects/markdown/syntax)
+* [wps for linux公式乱码的点这里(2013-1-9更新)-金山WPS Office官网论坛](http://bbs.wps.cn/thread-22355435-1-1.html)
+* [叮当&莎莎的考G物语合辑
+
+[阿里巴巴实习生招聘流程_阿里巴巴实习生招聘流程_大街网](http://company.dajie.com/alibabacampus)
+[Windows 7 Android 4.2.2 ADB device offline and no prompt to allow USB debugging - Android Forums at AndroidCentral.com](http://forums.androidcentral.com/verizon-galaxy-nexus-rooting-roms-hacks/259098-windows-7-android-4-2-2-adb-device-offline-no-prompt-allow-usb-debugging.html)
+[Bread & Cup Skip GIT SSL Verification | Bread & Cup](https://blog.breadncup.com/2011/06/09/skip-git-ssl-verification/)
+[Storage Options | Android Developers](http://developer.android.com/guide/topics/data/data-storage.html#pref)
+[Animation Resources | Android Developers](http://developer.android.com/guide/topics/resources/animation-resource.html)
+[爱可以多狗 - 陈僖仪 - 盘川_视频在线观看 - 56.com](http://www.56.com/u34/v_ODc0ODYwMTU.html)
+[Google眼镜详细开箱组图+视频曝光 - 硬件数码 - 远景 - Windows7,Windows8,旗舰版,系统下载,主题](http://www.pcbeta.com/viewnews-49723-1.html)
+[android - ViewPager inside ListView - Stack Overflow](http://stackoverflow.com/questions/8674529/viewpager-inside-listview)
+[36氪招人啦，快到碗里来！（收到退信的童鞋可重发一次） | 36氪](http://www.36kr.com/p/202673.html)
+[《可惜不是你》背后的故事 – 【人人分享-人人网】](http://blog.renren.com/share/270994344/2864112263)
+[人人网 - 浏览照片](http://photo.renren.com/photo/507074191/tags/336356740/photo-4230411471?ref=hotnewsfeed&sfet=702&fin=1&fid=22141712715&ff_id=&platform=0&expose_time=1366359034)
+[Apple - iWork - Find out how to use Pages, Numbers, and Keynote.](https://www.apple.com/iwork/tutorials/#keynote-intro)
+[如何在家给宠物狗洗澡 | 视频教程 | 几分钟网生活百科| jifenzhong.com](http://www.jifenzhong.com/video/2313-How-To-Bathe-Your-Dog)
+[nicolasff/phpredis · GitHub](https://github.com/nicolasff/phpredis)
+[Redis详细完整教程-windows下的安装、测试(php+redis+mysql) | 疯狂的蚂蚁](http://www.crazyant.net/2012/06/02/redis%E8%AF%A6%E7%BB%86%E5%AE%8C%E6%95%B4%E6%95%99%E7%A8%8B-windows%E4%B8%8B%E7%9A%84%E5%AE%89%E8%A3%85%E3%80%81%E6%B5%8B%E8%AF%95phpredismysql/)
+[ZAKER-最流行新闻阅读软件 - Android Apps on Google Play](https://play.google.com/store/apps/details?id=com.myzaker.ZAKER_Phone&hl=en)
+[【新浪微博：@阿伯微博爆搞搞事专区 】_视频在线观看 - 56.com](http://www.56.com/u98/v_NjkzNjI5MTk.html/1030_awecea848m.html)
+[http://jameszhao84.iteye.com/blog/1344584](http://jameszhao84.iteye.com/blog/1344584)
+[Java 开发 2.0: 现实世界中的 Redis](http://www.ibm.com/developerworks/cn/java/j-javadev2-22/)
+[Redis_百度百科](http://baike.baidu.com/view/4595959.htm)
+[Instagram_百度百科](http://baike.baidu.com/view/4716226.htm)
+[Android编程获取网络连接状态(3G/Wifi)及调用网络配置界面 - Mainroadlee - 博客园](http://www.cnblogs.com/mainroadlee/archive/2011/01/11/Android_Network_State_Checking_And_Setting.html)
+[王祖蓝超级搞笑短片_视频在线观看 - 56.com](http://www.56.com/u31/v_NjY4MDQ0Mjg.html/1030_awecea848m.html)
+[Kubuntu wps for linux缺字体解决方法 | 大憨的责任田](http://www.51bigfool.com/kubutun-wps-for-linux%E7%BC%BA%E5%AD%97%E4%BD%93%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95.html)
+[广告做的好，不如广告做的巧，Tumblr首推移动广告 | 36氪](http://www.36kr.com/p/202772.html)
+[Flinto – Icon Strike!](https://www.flinto.com/strike/3c650cc275)
+[在豆瓣实习](http://jobs.douban.com/jobs/intern/#position-intern_cpkf)
+[Tony 的博客 - Tony - 网易博客](http://360517703.blog.163.com/)
+[PHP如何返回json格式的数据 - 美拓blog](http://blog.meituo.net/2010/09/26/php%E5%A6%82%E4%BD%95%E8%BF%94%E5%9B%9Ejson%E6%A0%BC%E5%BC%8F%E7%9A%84%E6%95%B0%E6%8D%AE/)
+[android几种欢迎界面的实现 - CSDN博客](http://m.blog.csdn.net/blog/qq634416025/7995667)
+[AsyncTask | Android Developers](http://developer.android.com/reference/android/os/AsyncTask.html)
+[android中json文件的写法 - zy_cl的专栏 - 博客频道 - CSDN.NET](http://blog.csdn.net/zy_cl/article/details/5676356)
+[adb shell里面ls提示opendir failed, Permission denied - 一米阳光 - 51Testing软件测试网 51Testing软件测试网-中国软件测试人的精神家园 - Powered by X-Space](http://www.51testing.com/?uid-464837-action-viewspace-itemid-827345)
+[请问下android数据库存放的具体位置 - ITeye问答](http://www.iteye.com/problems/14473)
+[SQLite Autoincrement](http://www.sqlite.org/autoinc.html)
+[foreach - Simple java arraylist question - Stack Overflow](http://stackoverflow.com/questions/7466180/simple-java-arraylist-question)
+[如何让图片部分透明？ - CSDN论坛 - CSDN.NET](http://bbs.csdn.net/topics/370267124)
+[Android开发论坛-改变图片所选择部分的颜色为透明-DevDiv.com - Powered by DEVDIV.COM!](http://www.devdiv.com/forum.php?mod=viewthread&tid=88407)
+[android 根据SD卡中图片路径读取并显示SD中的图片——源代码-Android 新手入门-eoeAndroid开发者社区 - Powered by Discuz!](http://www.eoeandroid.com/thread-93980-1-1.html)
+[How to close Android application? - Stack Overflow](http://stackoverflow.com/questions/2092951/how-to-close-android-application)
+[android 根据SD卡中图片路径读取并显示SD中的图片——源代码 - Android实例教程 - Android开发论坛 - 安卓开发论坛 - Android开发 - 安卓论坛 - 移动互联网门户](http://www.apkbus.com/android-12729-1-1.html)
+[Can an Android Toast be longer than "Toast.LENGTH_LONG"? - Stack Overflow](http://stackoverflow.com/questions/2220560/can-an-android-toast-be-longer-than-toast-length-long)
+[Accepted organizations for Google Summer of Code 2013](http://www.google-melange.com/gsoc/accepted_orgs/google/gsoc2013)
+[不一样的暑期工作：Google夏季编程计划之开源代码开发_Google黑板报_新浪博客](http://blog.sina.com.cn/s/blog_9c079b040101etwk.html)
+[Java反射机制剖析（三）-简单谈谈动态代理 - 陈建秋 廊坊师范学院七期信息技术提高班 - 博客频道 - CSDN.NET](http://blog.csdn.net/lfsf802/article/details/7239766)
+[Tips For Linux - How to find files in Linux using 'find'](http://www.codecoffee.com/tipsforlinux/articles/21.html)
+[Node.js - Wikipedia, the free encyclopedia](http://en.wikipedia.org/wiki/Nodejs)
+[神器级的Android平板阅读器：Mantano - 猪哥 (丁兆杰)的日志 - 网易博客](http://blog.163.com/zhaojie_ding/blog/static/172972895201110270235735/)
+[Android 字体设置 – 【人人分享-人人网】](http://blog.renren.com/share/232232060/7610576876)
+[Android中通过typeface设置字体 - bravestarr - 博客园](http://www.cnblogs.com/bravestarrhu/archive/2012/07/17/2595598.html)
+[Android系统中设置TextView的行间距（非行高） | 萝卜白菜的博客](http://orgcent.com/android-textview-linespacingextra/)
+[Student Union - 华南理工大学学生会](http://su.100steps.net/2007/news.php?id=13827)
+[如果戴着Google眼镜去约会_视频在线观看 - 56.com](http://www.56.com/u84/v_ODc5NjM2NDE.html)
+

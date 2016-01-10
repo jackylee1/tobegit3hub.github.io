@@ -1,0 +1,16 @@
++++
+date = "2016-01-10T08:35:28+08:00"
+draft = true
+title = "happy birthday to hua"
+
++++
+
+
+
+![](/images/HappyBirthdayToHua0.jpg)
+
+![](/images/HappyBirthdayToHua1.jpg)
+
+![](/images/HappyBirthdayToHua2.jpg)
+
+![](/images/HappyBirthdayToHua3.jpg)
