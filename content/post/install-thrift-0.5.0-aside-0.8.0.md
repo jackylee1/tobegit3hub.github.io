@@ -1,5 +1,5 @@
 +++
-date = "2016-01-10T08:35:31+08:00"
+date = "2014-04-04T08:35:31+08:00"
 draft = true
 title = "install thrift 0.5.0 aside 0.8.0"
 

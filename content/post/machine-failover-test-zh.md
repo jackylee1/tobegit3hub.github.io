@@ -1,5 +1,5 @@
 +++
-date = "2016-01-10T08:35:32+08:00"
+date = "2014-10-08T08:35:32+08:00"
 draft = true
 title = "machine failover test zh"
 

@@ -1,5 +1,5 @@
 +++
-date = "2016-01-10T08:35:28+08:00"
+date = "2013-01-31T08:35:28+08:00"
 draft = true
 title = "android implement observe pattern"
 

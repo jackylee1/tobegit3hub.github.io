@@ -1,5 +1,5 @@
 +++
-date = "2016-01-10T08:35:31+08:00"
+date = "2014-05-14T08:35:31+08:00"
 draft = true
 title = "set linux environment in mac"
 

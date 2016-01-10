@@ -1,5 +1,5 @@
 +++
-date = "2016-01-10T08:35:33+08:00"
+date = "2015-09-19T08:35:33+08:00"
 draft = true
 title = "compile ceph"
 

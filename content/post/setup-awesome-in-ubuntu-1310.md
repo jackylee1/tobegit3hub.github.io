@@ -1,5 +1,5 @@
 +++
-date = "2016-01-10T08:35:30+08:00"
+date = "2013-12-05T08:35:30+08:00"
 draft = true
 title = "setup awesome in ubuntu 1310"
 

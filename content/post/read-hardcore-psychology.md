@@ -1,5 +1,5 @@
 +++
-date = "2016-01-10T08:35:30+08:00"
+date = "2013-08-26T08:35:30+08:00"
 draft = true
 title = "read hardcore psychology"
 

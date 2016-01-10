@@ -1,5 +1,5 @@
 +++
-date = "2016-01-10T08:35:30+08:00"
+date = "2013-11-30T08:35:30+08:00"
 draft = true
 title = "easy way to install java"
 
