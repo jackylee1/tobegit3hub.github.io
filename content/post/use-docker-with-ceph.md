@@ -30,4 +30,4 @@ Docker抽象出volume driver后，社区立即提Issue希望实现Ceph的plugin�
 
 ## 推荐
 
-最后忍不住推荐在容器和分布式存储都有卓越贡献的腾讯工程师和他的博客 <http://hustcat.github.io> 。
+最后忍不住推荐在容器和分布式存储都有深入研究的腾讯工程师和他的博客 <http://hustcat.github.io> 。
