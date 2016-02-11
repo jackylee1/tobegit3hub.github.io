@@ -7,6 +7,9 @@ title = "write puppet openstack"
 
 ## Puppet
 
+```
+puppet parser validate *.pp
+```
 
 ## Puppet OpenStack
 
