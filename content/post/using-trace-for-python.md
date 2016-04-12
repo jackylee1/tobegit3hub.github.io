@@ -22,6 +22,9 @@ python -m trace -t foo.py
 如果想自定义trace格式，或者在特定代码打trace，可以自己实现一个函数，然后在代码中插入trace。
 
 ```
+import sys, linecache
+TRACING = []
+
 def mytrace(frame, event, arg):
     if event == "line":
         lineno = frame.f_lineno
