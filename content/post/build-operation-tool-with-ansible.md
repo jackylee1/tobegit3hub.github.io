@@ -54,3 +54,5 @@ ansible -i ./hosts db -m copy -a 'src=/Users/tobe/script.sh dest="/Users/tobe/sc
 ![](https://raw.githubusercontent.com/tobegit3hub/osop/master/screenshot.png)
 
 有了Ansible工具，我们不仅可以实现批量服务器的运维，可以对服务器进行分组管理，可以通过Playbook实现自动化操作，后续我们还可以加上测试和HA配置，事实上我们已经使用Ansible优化我们的部署流程。更多技术介绍也可以关注 [UnitedStack官方博客](https://www.ustack.com/about/blog/) ，讲了这么多大家才知道这是一篇广告博文 ^_^
+
+![](/images/live_without_steve_jobs.jpg)
