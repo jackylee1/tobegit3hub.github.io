@@ -1,7 +1,7 @@
 +++
 date = "2016-04-14T22:19:02+08:00"
 draft = true
-title = "基于Ansible实现的自动化运维工具"
+title = "基于Ansible实现自动化运维工具"
 
 +++
 
@@ -49,7 +49,7 @@ ansible -i ./hosts db -m copy -a 'src=/Users/tobe/script.sh dest="/Users/tobe/sc
 
 在我们企业版OpenStack的环境中，日常的运维操作无非就是重启各种服务、测试Ceph集群可用性、测试能否创建虚拟机，由于涉及多节点操作而且不同服务重启方式不同，我们频繁在clush中重复操作了。于是我们有了 [osop](https://github.com/tobegit3hub/osop) 工具，先来看看 [演示视频](http://v.youku.com/v_show/id_XMTQ5MTIzMzQyMA==.html) 。
 
-P我们用Ansible Playbook实现了多种高可用服务，例如Nova、Cinder、Glance、Memcache、RabbitMQ、MariaDB等服务的重启操作，通过脚本实现Ansible自动化创建虚拟机和云硬盘，通过Playbook来简化Ceph集群状态的检测。最最最重要的是，我们基于ncurses实现了交互式界面，也就是说没有任何命令行使用经验的人都可以轻松玩耍ansible-playbook，而不会误用或者陷入实现的细节，大家看截图就知道。
+我们用Ansible Playbook实现了多种高可用服务，例如Nova、Cinder、Glance、Memcache、RabbitMQ、MariaDB等服务的重启操作，通过脚本实现Ansible自动化创建虚拟机和云硬盘，通过Playbook来简化Ceph集群状态的检测。最最最重要的是，我们基于ncurses实现了交互式界面，也就是说没有任何命令行使用经验的人都可以轻松玩耍ansible-playbook，而不会误用或者陷入实现的细节，大家看截图就知道。
 
 ![](https://raw.githubusercontent.com/tobegit3hub/osop/master/screenshot.png)
 
