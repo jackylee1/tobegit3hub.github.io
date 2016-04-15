@@ -7,6 +7,8 @@ title = "Pacemaker高可用方案初体验"
 
 ## Pacemaker简介
 
+![](/images/pacemaker_logo.png)
+
 虽然这不是最经典的Linux高可用教程，但通过此文档你可以快速精通Pacemaker、Corosync等技术，从而实现基于Linux的服务高可用配置。
 
 高可用是应用开发者追求的特性，及时硬件故障、服务器宕机也能自动恢复服务，不需要人工接入。Google在设计分布式的Chubby、GFS和BigTable也就考虑到这点，而传统的Linux基础服务例如MySQL、RabbitMQ等原始为单机设计，在高可用上需要配合集群管理工具Pacemaker等才能实现，而且Corosync实现的类Paxos协议能容忍网络分区、节点故障等分布式问题。
