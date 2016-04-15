@@ -155,7 +155,7 @@ pcs resource defaults
 pcs resource show p_vip
 pcs resource update p_vip monitor interval=3 timeout=20
 pcs resource show p_vip
-``
+```
 
 修改每个资源其他属性。
 
