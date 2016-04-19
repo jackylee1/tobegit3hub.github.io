@@ -8,6 +8,7 @@ title = "recommand sublime text plugins"
 ## 推荐插件
 
 * Python IDE插件，<https://github.com/DamnWidget/anaconda>
+* Golang IDE插件，<https://github.com/DisposaBoy/GoSublime>
 * Markdown插件，<https://github.com/SublimeText-Markdown/MarkdownEditing>
 * 交互式执行脚本插件，<https://github.com/wuub/SublimeREPL>
 * 多语言的Linter工具，<http://sublimelinter.readthedocs.org/en/latest/installation.html>
