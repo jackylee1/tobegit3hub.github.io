@@ -17,3 +17,4 @@ title = "recommand sublime text plugins"
 ## 参考链接 
 
 * <https://blog.scislab.com/zh/2015/12/sublime-text-%E7%89%B9%E8%89%B2%E6%8F%92%E4%BB%B6%E6%8E%A8%E8%8D%90-%EF%BC%88%E9%80%82%E7%94%A8%E4%BA%BA%E7%BE%A4-python-java%EF%BC%89>
+* <http://www.jianshu.com/p/3cb5c6f2421c>
