@@ -5,7 +5,6 @@ title = "download youtube video"
 
 +++
 
-
 * Request AWS spot instance in https://console.aws.amazon.com/ec2sp/v1/spot/home
 * Create the key pair and login the virtual machine
 * sudo yum update -y
